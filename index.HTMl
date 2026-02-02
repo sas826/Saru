@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>منيو سَارُوجَة | Saruja Menu</title>
+    <meta name="description" content="أصل المشاوي الدمشقية - تصفح المنيو واطلب الآن">
+    <meta property="og:title" content="منيو سَارُوجَة | Saruja Menu">
+    <meta property="og:image" content="https://i.ibb.co/HTChrMHB/IMG-8880.jpg">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        saruja: {
+                            brown: '#5a2d0c',     
+                            accent: '#c15b2a',    
+                            dark: '#120805',      
+                            gold: '#ffd700',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            background-color: #120805; 
+            color: #fff; 
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- Background --- */
+        .fire-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at bottom, #3d1a08 0%, #080302 90%);
+        }
+        .ember {
+            position: absolute; bottom: -10px; width: 3px; height: 3px; background: #c15b2a;
+            border-radius: 50%; opacity: 0; pointer-events: none;
+        }
+
+        /* --- Logo Animation --- */
+        .logo-wrapper {
+            position: relative; width: 9rem; height: 9rem; display: flex; justify-content: center; align-items: center; margin-bottom: 1rem;
+            transform: scale(0); animation: popUpLogo 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.3s;
+        }
+        @keyframes popUpLogo { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .fire-ring {
+            position: absolute; inset: -15px; border-radius: 50%; z-index: 0; opacity: 0;
+            animation: fireIgniteLoop 3s infinite 1.2s; 
+        }
+        @keyframes fireIgniteLoop {
+            0% { box-shadow: 0 0 10px #ff4500; opacity: 0.5; }
+            50% { box-shadow: 0 0 60px #ff4500, 0 0 100px #ffcc00; opacity: 1; }
+            100% { box-shadow: 0 0 10px #ff4500; opacity: 0.5; }
+        }
+        .logo-img-box {
+            position: relative; z-index: 10; width: 100%; height: 100%; background: white;
+            border-radius: 50%; border: 3px solid rgba(193, 91, 42, 0.5); overflow: hidden; padding: 2px;
+        }
+
+        /* --- Card Design (Optimized) --- */
+        .glass-card {
+            background: rgba(20, 10, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Price Box Design */
+        .price-box {
+            border: 1px solid rgba(193, 91, 42, 0.6);
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 2px 6px;
+            text-align: center;
+            min-width: 55px; /* Slightly smaller to fit 3 items */
+        }
+        .price-text { color: #ffd700; font-weight: bold; font-size: 0.85rem; }
+        .currency-text { color: #ffd700; font-size: 0.6rem; font-weight: normal; margin-right: 2px; }
+        .cal-text { color: #9ca3af; font-size: 0.55rem; margin-top: 2px; display: block; text-align: center;}
+        .size-label { font-size: 0.65rem; color: #ccc; margin-bottom: 2px; display: block; text-align: center; }
+
+        /* --- Utilities --- */
+        .spinner-plate { animation: spin 30s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        #intro-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .falling-char { display: inline-block; font-size: 3.5rem; font-weight: 900; color: #c15b2a; opacity: 0; text-shadow: 0 0 15px rgba(193, 91, 42, 0.6); }
+        
+        #search-container { max-height: 0; overflow: hidden; transition: max-height 0.3s; background: rgba(0,0,0,0.95); }
+        #search-container.open { max-height: 60px; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); z-index: 10000; display: none; justify-content: center; align-items: center; opacity: 0; transition: 0.3s; padding: 20px; }
+        .modal-content { background: #1a1a1a; border: 1px solid #c15b2a; width: 100%; max-width: 400px; border-radius: 20px; padding: 25px; transform: scale(0.9); transition: 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        
+        .hide-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="loading">
+
+    <div class="fire-bg" id="embers-container"></div>
+
+    <div id="intro-screen">
+        <div class="flex flex-row-reverse gap-1" id="logo-text">
+            <span class="falling-char">ة</span><span class="falling-char">ج</span><span class="falling-char">و</span><span class="falling-char">ر</span><span class="falling-char">ا</span><span class="falling-char">س</span>
+        </div>
+        <p class="text-white/60 mt-4 text-sm tracking-[0.2em] opacity-0 font-bold" id="slogan">THE ORIGIN OF GRILL</p>
+    </div>
+
+    <div id="main-content" class="opacity-0 pb-32">
+        
+        <header class="relative min-h-[50vh] flex flex-col items-center justify-center text-center px-4 pt-12 pb-4 overflow-hidden">
+            <div class="absolute top-4 right-4 z-50">
+                <button onclick="toggleLanguage()" class="bg-black/50 backdrop-blur-md border border-saruja-accent/50 text-white px-3 py-1 rounded-full text-xs font-bold hover:bg-saruja-accent transition flex items-center gap-1 shadow-lg">
+                    <i class="fas fa-globe"></i> <span id="lang-text">EN</span>
+                </button>
+            </div>
+
+            <div class="logo-wrapper">
+                <div class="fire-ring"></div>
+                <div class="logo-img-box"><img src="https://i.ibb.co/HTChrMHB/IMG-8880.jpg" alt="Saruja Logo" class="w-full h-full object-contain rounded-full"></div>
+            </div>
+            <h1 class="text-5xl font-black text-white mb-1 drop-shadow-xl tracking-tighter" id="header-title">سَارُوجَة</h1>
+            <p class="text-xl text-saruja-accent font-bold tracking-wide mb-6" id="header-subtitle">أصل المشاوي</p>
+            <div class="relative z-0 w-60 md:w-72"><img src="https://i.ibb.co/27jnKsN7/IMG-8884.png" alt="Plate" class="w-full spinner-plate drop-shadow-2xl opacity-90"></div>
+        </header>
+
+        <div id="search-container" class="sticky top-0 z-50 w-full px-4 border-b border-white/10">
+            <div class="flex items-center h-[60px] gap-2">
+                <i class="fas fa-search text-saruja-accent"></i>
+                <input type="text" id="search-input" onkeyup="filterMenu()" placeholder="ابحث عن صنف..." class="bg-transparent w-full text-white focus:outline-none text-sm font-bold h-full">
+                <button onclick="toggleSearch()" class="text-gray-400"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+
+        <nav class="sticky top-0 z-40 bg-[#120805]/95 backdrop-blur-xl border-b border-white/10 py-3 shadow-2xl transition-all" id="main-nav">
+            <div class="flex items-center justify-between px-3">
+                <button onclick="toggleSearch()" class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-white shrink-0 mr-2 border border-white/10 hover:border-saruja-accent transition"><i class="fas fa-search"></i></button>
+                <div class="flex overflow-x-auto gap-2 hide-scroll flex-1" id="nav-buttons"></div>
+            </div>
+        </nav>
+
+        <main class="max-w-4xl mx-auto px-3 py-6 space-y-12" id="menu-container"></main>
+
+        <div class="fixed bottom-0 left-0 width-full w-full bg-[#120805]/95 backdrop-blur-md border-t border-white/10 p-4 z-50 flex justify-center">
+            <button onclick="openModal()" class="w-full max-w-md bg-saruja-accent text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 animate-pulse transition hover:scale-105">
+                <i class="fas fa-utensils"></i><span id="order-btn-text">اطلب الآن</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="orderModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content relative" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white z-20"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-2xl font-black text-white mb-8 border-b border-white/10 pb-4" id="modal-title">كيف تحب أن تطلب؟</h3>
+            <div class="space-y-6">
+                <div class="p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/10 hover:border-saruja-accent transition cursor-pointer group">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-saruja-accent/20 p-3 rounded-full group-hover:bg-saruja-accent transition"><i class="fas fa-cash-register text-2xl text-saruja-accent group-hover:text-white"></i></div>
+                        <div class="text-right w-full"><p class="text-white font-bold text-lg" id="modal-cashier">الطلب من الكاشير</p><p class="text-gray-400 text-xs mt-1" id="modal-cashier-sub">اطلب مباشرة من موظف الفرع</p></div>
+                    </div>
+                </div>
+                <div class="relative py-2"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-white/10"></span></div><div class="relative flex justify-center text-xs"><span class="px-2 bg-[#1a1a1a] text-gray-500 font-bold" id="modal-or">أو عبر التطبيق</span></div></div>
+                <div class="text-center">
+                    <p class="text-sm text-saruja-gold mb-3 font-medium" id="modal-app-text">لاستلام الطلب من الفرع أو التوصيل لموقعك.. حمل التطبيق</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="https://tr.ee/2Qg7rq" target="_blank" class="flex flex-col items-center justify-center p-3 bg-white text-black rounded-xl hover:bg-gray-200 transition"><i class="fab fa-apple text-2xl mb-1"></i><span class="font-bold text-sm">App Store</span></a>
+                        <a href="https://tr.ee/VMwPyg" target="_blank" class="flex flex-col items-center justify-center p-3 bg-transparent border border-white/30 text-white rounded-xl hover:bg-white/10 transition"><i class="fab fa-google-play text-2xl mb-1 text-green-500"></i><span class="font-bold text-sm">Google Play</span></a>
+                    </div>
+                </div>
+                 <div class="pt-4 border-t border-white/10"><a href="https://linktr.ee/SarujaRestaurants" target="_blank" class="block w-full py-3 rounded-xl border border-saruja-accent/50 text-saruja-accent font-bold hover:bg-saruja-accent hover:text-white transition flex items-center justify-center gap-2"><i class="fas fa-info-circle"></i><span id="modal-more">المزيد عن ساروجة</span></a></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'ar';
+        const translations = {
+            ar: {
+                title: "سَارُوجَة", subtitle: "أصل المشاوي", searchPH: "ابحث عن صنف...", orderBtn: "اطلب الآن",
+                modalTitle: "كيف تحب أن تطلب؟", modalCashier: "الطلب من الكاشير", modalCashierSub: "اطلب مباشرة من موظف الفرع",
+                modalOr: "أو عبر التطبيق", modalAppText: "لاستلام الطلب من الفرع أو التوصيل لموقعك.. حمل التطبيق", modalMore: "المزيد عن ساروجة",
+                cats: { grills: "🔥 المشويات", appetizers: "🥣 المقبلات", oven: "🥘 الصواني", pastries: "🥟 المعجنات", salads: "🥗 السلطات", drinks: "🍹 المشروبات" }
+            },
+            en: {
+                title: "SARUJA", subtitle: "The Origin of Grill", searchPH: "Search for item...", orderBtn: "Order Now",
+                modalTitle: "How to order?", modalCashier: "Cashier Order", modalCashierSub: "Order directly from the branch",
+                modalOr: "Or via App", modalAppText: "For pickup or delivery.. Download the App", modalMore: "More about Saruja",
+                cats: { grills: "🔥 Grills", appetizers: "🥣 Appetizers", oven: "🥘 Oven Trays", pastries: "🥟 Pastries", salads: "🥗 Salads", drinks: "🍹 Drinks" }
+            }
+        };
+
+        // DATABASE: Prices Ordered Small -> Medium -> Large (Right to Left flow)
+        const menuDB = {
+            grills: [
+                { name: "كباب خشخاش", nameEn: "Khashkhash Kebab", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731fdd1c275b.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"36", c:"230"}, {l:"نص ك", le:"0.5Kg", p:"71", c:"460"}, {l:"كيلو", le:"1Kg", p:"139", c:"920"}] },
+                { name: "كباب لحم", nameEn: "Meat Kebab", img: "https://media-files.tryordersystem.com/menu/saruja/creating/673200510bacb.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"32", c:"570"}, {l:"نص ك", le:"0.5Kg", p:"64", c:"1040"}, {l:"كيلو", le:"1Kg", p:"128", c:"2080"}] },
+                { name: "كباب سجق", nameEn: "Sujuk Kebab", img: "https://media-files.tryordersystem.com/menu/saruja/649b955f-5c70-4434-9fea-921760629800/6745d2e79a810.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"34", c:"350"}, {l:"نص ك", le:"0.5Kg", p:"68", c:"700"}, {l:"كيلو", le:"1Kg", p:"132", c:"1400"}] },
+                { name: "أوصال لحم", nameEn: "Meat Awshal", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731fef00ee56.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"34", c:"470"}, {l:"نص ك", le:"0.5Kg", p:"68", c:"940"}, {l:"كيلو", le:"1Kg", p:"136", c:"1880"}] },
+                { name: "كباب دجاج", nameEn: "Chicken Kebab", img: "https://media-files.tryordersystem.com/menu/saruja/creating/673200c2c2d55.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"25", c:"250"}, {l:"نص ك", le:"0.5Kg", p:"49", c:"500"}, {l:"كيلو", le:"1Kg", p:"95", c:"1000"}] },
+                { name: "شيش دجاج", nameEn: "Shish Tawook", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731fdffbebd7.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"28", c:"490"}, {l:"نص ك", le:"0.5Kg", p:"55", c:"980"}, {l:"كيلو", le:"1Kg", p:"109", c:"1960"}] },
+                { name: "مشكل لحم", nameEn: "Mixed Meat", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731ffb4a3d1d.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"38", c:"510"}, {l:"نص ك", le:"0.5Kg", p:"69", c:"1020"}, {l:"كيلو", le:"1Kg", p:"138", c:"2040"}] },
+                { name: "مشكل دجاج", nameEn: "Mixed Chicken", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731ff7c78173.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"29", c:"320"}, {l:"نص ك", le:"0.5Kg", p:"53", c:"550"}, {l:"كيلو", le:"1Kg", p:"105", c:"1100"}] },
+                { name: "نقانق مشوية", nameEn: "Grilled Sausages", img: "https://media-files.tryordersystem.com/menu/saruja/e2dac016-88aa-4b91-864e-74cb8343464f/6877921b265ec.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"29", c:"290"}, {l:"نص ك", le:"0.5Kg", p:"58", c:"580"}, {l:"كيلو", le:"1Kg", p:"110", c:"1060"}] },
+                { name: "مشاوي مشكل", nameEn: "Mixed Grills", img: "https://media-files.tryordersystem.com/menu/saruja/259f65cf-f869-4655-b7f5-6b89e0b885b1/6877e519f1875.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"33", c:"420"}, {l:"نص ك", le:"0.5Kg", p:"65", c:"840"}, {l:"كيلو", le:"1Kg", p:"128", c:"1680"}] },
+                { name: "مشاوي ساروجة", nameEn: "Saruja Grills", img: "https://media-files.tryordersystem.com/menu/saruja/3a601190-384c-4dbb-b753-b70e929e94c1/6730de3d7299e.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"38", c:"720"}, {l:"نص ك", le:"0.5Kg", p:"75", c:"1410"}, {l:"كيلو", le:"1Kg", p:"149", c:"1950"}] },
+                { name: "مشكل كباب", nameEn: "Mixed Kebab", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731fe2d03e66.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"28", c:"480"}, {l:"نص ك", le:"0.5Kg", p:"55", c:"960"}, {l:"كيلو", le:"1Kg", p:"109", c:"1920"}] },
+                { name: "كباب لحم بالطحينية", nameEn: "Kebab w/ Tahini", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731fd831fac0.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"36", c:"675"}, {l:"نص ك", le:"0.5Kg", p:"72", c:"1350"}, {l:"كيلو", le:"1Kg", p:"142", c:"2700"}] },
+                { name: "مشكل أوصال", nameEn: "Mixed Awshal", img: "https://media-files.tryordersystem.com/menu/saruja/b04eaaa2-2f18-42ed-94da-85bb205f748e/6730db89c6d9d.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"41", c:"460"}] },
+                { name: "ريش", nameEn: "Lamb Chops", img: "https://media-files.tryordersystem.com/menu/saruja/8cfe98d8-fe58-4b00-b2ac-2ee2151e9a3d/6732057ea2a5f.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"49", c:"575"}, {l:"نص ك", le:"0.5Kg", p:"98", c:"1150"}, {l:"كيلو", le:"1Kg", p:"196", c:"2300"}] },
+                { name: "جوانح دجاج", nameEn: "Chicken Wings", img: "https://media-files.tryordersystem.com/menu/saruja/de8e2b89-83d1-4d59-a47b-6babb09309f1/6732063e744e0.jpeg",
+                  data: [{l:"نفر", le:"Platter", p:"24", c:"450"}, {l:"نص ك", le:"0.5Kg", p:"48", c:"900"}, {l:"كيلو", le:"1Kg", p:"96", c:"1800"}] },
+                { name: "طوشكا", nameEn: "Toshka", img: "https://media-files.tryordersystem.com/menu/saruja/9af9cdaf-f765-4c60-9992-268d6454a848/6733609f93bab.jpeg",
+                  data: [{l:"", le:"", p:"32", c:"245"}] },
+                { name: "طوشكا دجاج", nameEn: "Chicken Toshka", img: "https://media-files.tryordersystem.com/menu/saruja/132b97b7-7975-4fc4-8258-0f9eb02b17e4/673360bc12975.jpeg",
+                  data: [{l:"", le:"", p:"26", c:"220"}] },
+                { name: "دجاج عالفحم", nameEn: "Charcoal Chicken", img: "https://media-files.tryordersystem.com/menu/saruja/7f19d32d-f81a-4803-8927-91aaf2abdcd6/67320772db014.jpeg",
+                  data: [{l:"", le:"", p:"40", c:"2650"}] },
+                { name: "نصف دجاجة عالفحم", nameEn: "Half Chicken", img: "https://media-files.tryordersystem.com/menu/saruja/7f19d32d-f81a-4803-8927-91aaf2abdcd6/67320772db014.jpeg",
+                  data: [{l:"", le:"", p:"20", c:"1325"}] },
+                { name: "عرايس", nameEn: "Arayes", img: "https://media-files.tryordersystem.com/menu/saruja/a3c40559-576c-4de3-8725-6caa202b5222/673206bf5ad0f.jpeg",
+                  data: [{l:"", le:"", p:"27", c:"175"}] },
+                { name: "كبة مشوية", nameEn: "Grilled Kibbeh", img: "https://media-files.tryordersystem.com/menu/saruja/8b27214e-91d1-40bf-ac78-d9c4c8a394ce/69020dd9b4f57.jpg",
+                  data: [{l:"للحبة", le:"Piece", p:"7", c:"210"}] },
+                { name: "أفخاذ دجاج عالفحم", nameEn: "Chicken Thighs", img: "https://media-files.tryordersystem.com/menu/saruja/289b131c-6957-4975-be0a-cf306e1d79e1/6732080b4046b.jpeg",
+                  data: [{l:"", le:"", p:"19", c:"690"}] }
+            ],
+            appetizers: [
+                { name: "مقبلات مشكلة", nameEn: "Mixed Appetizers", img: "https://media-files.tryordersystem.com/menu/saruja/7c90b08d-f087-47ec-8833-7519c5c00e18/696cf3df4e1f5.png",
+                  data: [{l:"صغير", le:"Small", p:"17", c:"280"}, {l:"وسط", le:"Medium", p:"29", c:"560"}, {l:"كبير", le:"Large", p:"39", c:"785"}] },
+                { name: "مقبلات مشكل (حمص+متبل)", nameEn: "Mix (Hummus+Mutabal)", img: "https://media-files.tryordersystem.com/menu/saruja/b49b1339-b86b-4003-b52a-1ee2eb4fb66f/68dad61f569f8.png",
+                  data: [{l:"صغير", le:"Small", p:"19", c:"265"}, {l:"وسط", le:"Medium", p:"32", c:"420"}, {l:"كبير", le:"Large", p:"48", c:"660"}] },
+                { name: "حمص", nameEn: "Hummus", img: "https://media-files.tryordersystem.com/menu/saruja/5d9ff434-7c65-4ac6-98da-10d4391b4191/68da77b6372a2.jpeg",
+                  data: [{l:"ميني", le:"Mini", p:"6", c:"275"}, {l:"صغير", le:"Small", p:"15", c:"380"}, {l:"وسط", le:"Medium", p:"29", c:"760"}, {l:"كبير", le:"Large", p:"46", c:"1060"}] },
+                { name: "حمص باللحمة", nameEn: "Hummus w/ Meat", img: "https://media-files.tryordersystem.com/menu/saruja/66abd551-f505-4bc5-93f6-14fa9f6d8050/6731e889546c5.jpeg",
+                  data: [{l:"", le:"", p:"25", c:"430"}] },
+                { name: "حمص بيروتي", nameEn: "Hummus Beiruti", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731eb01cb8d7.jpeg",
+                  data: [{l:"ميني", le:"Mini", p:"6", c:"288"}, {l:"صغير", le:"Small", p:"15", c:"705"}, {l:"وسط", le:"Medium", p:"29", c:"790"}, {l:"كبير", le:"Large", p:"46", c:"1110"}] },
+                { name: "متبل", nameEn: "Mutabal", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731eb270d03e.jpeg",
+                  data: [{l:"ميني", le:"Mini", p:"6", c:"232"}, {l:"صغير", le:"Small", p:"15", c:"465"}, {l:"وسط", le:"Medium", p:"29", c:"640"}, {l:"كبير", le:"Large", p:"46", c:"895"}] },
+                { name: "بابا غنوج", nameEn: "Baba Ghanouj", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731eb63f3ff9.jpeg",
+                  data: [{l:"ميني", le:"Mini", p:"6", c:"80"}, {l:"صغير", le:"Small", p:"15", c:"110"}, {l:"وسط", le:"Medium", p:"29", c:"220"}, {l:"كبير", le:"Large", p:"46", c:"310"}] },
+                { name: "محمرة", nameEn: "Muhammara", img: "https://media-files.tryordersystem.com/menu/saruja/00754d81-9f6f-47d4-93fb-f0c37e1bdc17/68da750b053bb.jpeg",
+                  data: [{l:"ميني", le:"Small", p:"6", c:"90"}, {l:"صغير", le:"Medium", p:"13", c:"350"}] },
+                { name: "ورق عنب", nameEn: "Vine Leaves", img: "https://media-files.tryordersystem.com/menu/saruja/045332aa-16f1-40b0-8294-387c2ad8fc35/693829efe3f3b.jpg",
+                  data: [{l:"ميني", le:"mini", p:"7", c:"240"}, {l:"صغير", le:"small", p:"15", c:"317"}, {l:"x", le:"Large", p:"x", c:"x"}] },
+                { name: "كبة مقلية", nameEn: "Fried Kibbeh", img: "https://media-files.tryordersystem.com/menu/saruja/ae6ab979-6ac8-4fb2-8a4b-5e36bde55454/69020d93dc0c3.jpg",
+                  data: [{l:"للحبة", le:"Piece", p:"4", c:"250"}] },
+                { name: "بطاطا مقلية", nameEn: "French Fries", img: "https://media-files.tryordersystem.com/menu/saruja/9d50b894-1fa5-46df-bd51-23b0c6d5cd3d/6731e6bb7c5c0.jpeg",
+                  data: [{l:"", le:"", p:"10", c:"420"}] },
+                { name: "شطة شامية (صحن)", nameEn: "Shami Hot Sauce", img: "https://foodics-console-production.s3.eu-west-1.amazonaws.com/images/459025_1730977035_9d6e7321-9d3f-4d99-a75b-d82970762c20.jpg",
+                  data: [{l:"", le:"", p:"5", c:"45"}] },
+                { name: "شطة شامية (علبة)", nameEn: "Shami Hot Sauce (Box)", img: "https://foodics-console-production.s3.eu-west-1.amazonaws.com/images/459025_1730977022_9d6e730d-93df-4ff0-84df-88eadd5238ab.jpg",
+                  data: [{l:"", le:"", p:"3", c:"75"}] },
+                { name: "صوص طحينية", nameEn: "Tahini Sauce", img: "https://media-files.tryordersystem.com/menu/saruja/64407ad8-3be1-47ad-97d3-2d9f39f5d6e5/68daceae52840.png",
+                  data: [{l:"", le:"", p:"2", c:"80"}] }
+            ],
+            oven: [
+                { name: "بيتزا ساروجة", nameEn: "Saruja Pizza", img: "https://media-files.tryordersystem.com/menu/saruja/4cfc3a1f-d342-4714-b606-0a4160785e55/67335f4e0a380.jpeg",
+                  data: [{p:"29", c:"420"}] },
+                { name: "بيتزا خضار", nameEn: "Vegetable Pizza", img: "https://media-files.tryordersystem.com/menu/saruja/d78c4670-2c4b-4aae-a132-6959aab6be97/67336044c4bd6.jpeg",
+                  data: [{p:"18", c:"270"}] },
+                { name: "بيتزا بيبروني", nameEn: "Pepperoni Pizza", img: "https://media-files.tryordersystem.com/menu/saruja/65baee41-a902-446d-ac5d-c5f860ff0070/67335f8dd2b27.jpeg",
+                  data: [{p:"20", c:"480"}] },
+                { name: "بيتزا أجبان", nameEn: "Cheese Pizza", img: "https://media-files.tryordersystem.com/menu/saruja/5371995c-ef19-4262-a4ea-e14a82ae573e/6745d7951c7a4.jpeg",
+                  data: [{p:"20", c:"420"}] },
+                { name: "عش البلبل", nameEn: "Osh Al-Bulbul", img: "https://media-files.tryordersystem.com/menu/saruja/528db8d7-4560-4168-9e89-faafd1ba6d56/6745d748cc7c5.jpeg",
+                  data: [{p:"22", c:"240"}] },
+                { name: "لحمة بالبندورة", nameEn: "Meat w/ Tomato", img: "https://media-files.tryordersystem.com/menu/saruja/41fab3cc-11eb-48cd-9a64-7eff30faca74/6732101410e8b.jpeg",
+                  data: [{p:"29", c:"610"}] },
+                { name: "لحمة طحينية", nameEn: "Meat w/ Tahini", img: "https://media-files.tryordersystem.com/menu/saruja/db6268d2-e603-4eaf-a067-3213ec7a05f8/67320cdc892d4.jpeg",
+                  data: [{p:"32", c:"320"}] },
+                { name: "كباب هندي", nameEn: "Indian Kebab", img: "https://media-files.tryordersystem.com/menu/saruja/2c7cf952-02bf-4564-8429-bfe5a2262bc0/67320f00820da.jpeg",
+                  data: [{p:"34", c:"445"}] },
+                { name: "حميس نفر", nameEn: "Hamees", img: "https://media-files.tryordersystem.com/menu/saruja/07509abf-7c56-46f4-834d-c45c5bd0b706/67320e4304f32.jpeg",
+                  data: [{p:"32", c:"154"}] },
+                { name: "أوصال بالفرن", nameEn: "Oven Awshal", img: "https://media-files.tryordersystem.com/menu/saruja/c22cac86-ce31-4b8b-bd02-6d5bda1c46fb/673210ab9abbc.jpeg",
+                  data: [{p:"36", c:"380"}] },
+                { name: "ريش بالفرن", nameEn: "Oven Chops", img: "https://media-files.tryordersystem.com/menu/saruja/56f06d9e-94ee-4f31-9610-4f774db19ff5/673211c432366.jpeg",
+                  data: [{p:"49", c:"510"}] },
+                { name: "شرحات مطفاية", nameEn: "Sharhat Mutafaya", img: "https://media-files.tryordersystem.com/menu/saruja/f47eba68-717a-4b1d-b8a5-956f744dbd2f/67320c7b66962.jpeg",
+                  data: [{p:"49", c:"500"}] },
+                { name: "نقانق بالفرن", nameEn: "Oven Sausages", img: "https://media-files.tryordersystem.com/menu/saruja/730c893d-e6b0-424b-a2a7-4a058ed9c9fc/67321124a7809.jpeg",
+                  data: [{p:"29", c:"300"}] },
+                { name: "مقلقل", nameEn: "Muqalqal", img: "https://media-files.tryordersystem.com/menu/saruja/a360e040-0d88-4415-95f7-bc2ae1284bc1/673210fa07e10.jpeg",
+                  data: [{p:"34", c:"495"}] },
+                { name: "فطر مع اللحم", nameEn: "Mushroom w/ Meat", img: "https://media-files.tryordersystem.com/menu/saruja/0c4e532b-273a-4e34-9a01-10155a42d7f9/67335e3659550.jpeg",
+                  data: [{p:"34", c:"495"}] },
+                { name: "شرحات ساروجة", nameEn: "Saruja Sharhat", img: "https://media-files.tryordersystem.com/menu/saruja/11cfb5c5-1632-4950-9606-a59d97d08ce5/673211883f256.jpeg",
+                  data: [{p:"38", c:"510"}] },
+                { name: "حميس بالخضار", nameEn: "Veggie Hamees", img: "https://media-files.tryordersystem.com/menu/saruja/538986b3-1bcd-4f4d-885a-e03a9e007fba/67320dbb55c5b.jpeg",
+                  data: [{p:"34", c:"295"}] },
+                { name: "فاهيتا ساروجة", nameEn: "Saruja Fajita", img: "https://media-files.tryordersystem.com/menu/saruja/4d19efd6-3cb1-40f7-b614-c36243f90755/69345089d2c88.png",
+                  data: [{p:"31", c:"510"}] },
+                { name: "فاهيتا ساروجة جبن", nameEn: "Fajita w/ Cheese", img: "https://media-files.tryordersystem.com/menu/saruja/50823ebc-4de2-48d8-8bdd-8a6a40b40de7/69345135e9adf.png",
+                  data: [{p:"35", c:"605"}] }
+            ],
+            pastries: [
+                { name: "صفيحة ساروجة", nameEn: "Saruja Safiha", img: "https://media-files.tryordersystem.com/menu/saruja/3bd02b94-52d8-4552-a8c4-80d8376b3f88/69342f0292ccf.png",
+                  data: [{l:"حبة", le:"Piece", p:"5", c:"95"}] },
+                { name: "صفيحة مشكل", nameEn: "Mixed Safiha", img: "https://media-files.tryordersystem.com/menu/saruja/241ce656-88f6-4b00-8989-c6c048c219dd/673312926ec52.jpeg",
+                  data: [{l:"نص ك", le:"0.5Kg", p:"62", c:"1800"}, {l:"كيلو", le:"1Kg", p:"119", c:"3600"}] },
+                { name: "صفيحة دبس", nameEn: "Dibis Safiha", img: "https://media-files.tryordersystem.com/menu/saruja/da4c1db1-5d38-4672-8fd9-9575979c9370/694a65ec58112.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"4", c:"90"}, {l:"نص ك", le:"0.5Kg", p:"62", c:"1800"}, {l:"كيلو", le:"1Kg", p:"119", c:"3600"}] },
+                { name: "صفيحة بندورة", nameEn: "Tomato Safiha", img: "https://media-files.tryordersystem.com/menu/saruja/da4c1db1-5d38-4672-8fd9-9575979c9370/694a65ec58112.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"4", c:"90"}, {l:"نص ك", le:"0.5Kg", p:"62", c:"1800"}, {l:"كيلو", le:"1Kg", p:"119", c:"3600"}] },
+                { name: "شرحات لحم بالعجين", nameEn: "Meat Dough", img: "https://media-files.tryordersystem.com/menu/saruja/4db70bfb-ec9f-40f2-a8fa-875ba0db22aa/694a664fcbc79.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"12", c:"350"}] },
+                { name: "شرحات دجاج بالعجين", nameEn: "Chicken Dough", img: "https://media-files.tryordersystem.com/menu/saruja/8cd62ecc-489f-4674-a1c6-8896ead8ddc4/694a68125bef7.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"9", c:"290"}] },
+                { name: "شرحات دجاج بالعجين مع الجبن", nameEn: "Chicken Dough w/ Cheese", img: "https://media-files.tryordersystem.com/menu/saruja/f503d725-9ed2-4455-8116-e003868c1a59/694a67f3b21d4.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"11", c:"390"}] },
+                { name: "مجرمشة لحم", nameEn: "Mujarmasha Meat", img: "https://media-files.tryordersystem.com/menu/saruja/f85f87b4-f9f4-4e3e-960d-18963d7b5552/694a668dd1de6.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"12", c:"250"}] },
+                { name: "مجرمشة لحم مع الخضار", nameEn: "Mujarmasha w/ Veg", img: "https://media-files.tryordersystem.com/menu/saruja/9dc3dc87-3fce-4365-a401-5e227328cba6/694a66a829a4e.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"12", c:"220"}] },
+                { name: "مجرمشة ساروجة لحم", nameEn: "Saruja Meat", img: "https://media-files.tryordersystem.com/menu/saruja/498168a1-d970-40ee-8288-ae01472df5d3/69342cfc4e467.png",
+                  data: [{l:"حبة", le:"Piece", p:"6", c:"180"}] },
+                { name: "مجرمشة ساروجة دجاج", nameEn: "Saruja Chicken", img: "https://media-files.tryordersystem.com/menu/saruja/2adfa110-13ad-4bd8-a065-803c68bfe9fc/694a658aad40d.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"9", c:"160"}] },
+                { name: "سجق", nameEn: "Sujuk Pie", img: "https://media-files.tryordersystem.com/menu/saruja/a734482f-f3d9-44f9-9203-6831d31e2340/694a68be588b8.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"4.5", c:"300"}] },
+                { name: "جبنة عكاوي", nameEn: "Akkawi Cheese", img: "https://media-files.tryordersystem.com/menu/saruja/599af78d-a40f-4b00-8e46-9d8218e4173c/694a68a11bbc5.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"4", c:"120"}, {l:"نص ك", le:"0.5Kg", p:"49", c:"1500"}, {l:"كيلو", le:"1Kg", p:"98", c:"3000"}] },
+                { name: "زعتر", nameEn: "Zaatar", img: "https://media-files.tryordersystem.com/menu/saruja/de04d5a5-5c50-4b51-8faf-5e5d0427d5ff/67320af009e9e.jpeg",
+                  data: [{l:"حبة", le:"Piece", p:"4", c:"120"}] },
+                { name: "سبانخ", nameEn: "Spinach", img: "https://media-files.tryordersystem.com/menu/saruja/de2905f1-0839-4267-ac8b-e014b47e6ddc/694a6933eb5ba.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"4", c:"70"}] },
+                { name: "محمرة", nameEn: "Muhammara", img: "https://media-files.tryordersystem.com/menu/saruja/6bc3f6c6-6806-4c45-9e6e-2bcccba4050f/67320bd9ef450.jpeg",
+                  data: [{l:"حبة", le:"Piece", p:"5", c:"60"}] },
+                { name: "محمرة قشقوان", nameEn: "Muhammara Kashkaval", img: "https://foodics-console-production.s3.eu-west-1.amazonaws.com/images/459025_1730976939_9d6e728f-1745-417c-ba68-e2ad6dcd4866.jpg",
+                  data: [{l:"حبة", le:"Piece", p:"8", c:"150"}] }
+            ],
+            salads: [
+                { name: "فتوش", nameEn: "Fattoush", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731f88a46da6.jpeg",
+                  data: [{l:"صغير", le:"Small", p:"16", c:"167"}, {l:"وسط", le:"Medium", p:"29", c:"460"}, {l:"كبير", le:"Large", p:"44", c:"645"}] },
+                { name: "تبولة", nameEn: "Tabbouleh", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731f94706d37.jpeg",
+                  data: [{l:"صغير", le:"Small", p:"16", c:"240"}, {l:"وسط", le:"Medium", p:"29", c:"480"}, {l:"كبير", le:"Large", p:"46", c:"670"}] },
+                { name: "سلطة خضراء", nameEn: "Green Salad", img: "https://media-files.tryordersystem.com/menu/saruja/creating/6731f9a8a4a10.jpeg",
+                  data: [{l:"صغير", le:"Small", p:"14", c:"49"}, {l:"وسط", le:"Medium", p:"27", c:"98"}, {l:"كبير", le:"Large", p:"39", c:"147"}] },
+                { name: "سلطة جرجير", nameEn: "Rocca Salad", img: "https://media-files.tryordersystem.com/menu/saruja/d3e3d16f-4ef4-4966-adc4-8acde7da19ba/6732071ba8bd2.jpeg",
+                  data: [{l:"صغير", le:"Small", p:"13", c:"115"}, {l:"وسط", le:"Medium", p:"26", c:"230"}, {l:"كبير", le:"Large", p:"39", c:"320"}] },
+                { name: "سلطة زيتون", nameEn: "Olive Salad", img: "https://media-files.tryordersystem.com/menu/saruja/2460c620-3c7f-4415-bb2a-f5311f0fb422/6731f51944e3d.jpeg",
+                  data: [{l:"", le:"", p:"13", c:"58"}] }
+            ],
+            drinks: [
+                { name: "عصير ساروجة برتقال", nameEn: "Orange Juice", img: "https://media-files.tryordersystem.com/menu/saruja/57681d68-a4fe-4f93-94e0-6eed8b7a4abb/673216b8aee20.jpeg",
+                  data: [{l:"", le:"", p:"11", c:"140"}] },
+                { name: "عصير ساروجة رمان", nameEn: "Pomegranate Juice", img: "https://media-files.tryordersystem.com/menu/saruja/f0343980-e111-4719-8011-c68dc3a81064/673216e015a79.jpeg",
+                  data: [{l:"", le:"", p:"9", c:"150"}] },
+                { name: "كاسة لبن", nameEn: "Yogurt Cup", img: "https://media-files.tryordersystem.com/menu/saruja/3f5add14-c443-4eab-bb54-a6d37ef14999/67335e940b37a.jpeg",
+                  data: [{l:"", le:"", p:"4.5", c:"49"}] },
+                { name: "جاك لبن", nameEn: "Yogurt Jug", img: "https://media-files.tryordersystem.com/menu/saruja/9b91b0c7-4641-4264-9295-54d1f0ed163d/68dad41ace8f8.png",
+                  data: [{l:"", le:"", p:"12", c:"520"}] },
+                { name: "بيبسي", nameEn: "Pepsi", img: "https://media-files.tryordersystem.com/menu/saruja/dfe39cd5-e063-43a9-82f6-f36f71949cc6/673214f5c61eb.png",
+                  data: [{l:"", le:"", p:"3.5", c:"161"}] },
+                { name: "بيبسي دايت", nameEn: "Diet Pepsi", img: "https://media-files.tryordersystem.com/menu/saruja/2a54ebbf-ddb3-4bb5-ba7b-f3925a883fec/673214b6487ab.png",
+                  data: [{l:"", le:"", p:"3.5", c:"0"}] },
+                { name: "سفن اب", nameEn: "7 Up", img: "https://media-files.tryordersystem.com/menu/saruja/446d6ea8-b24f-447c-a789-777415f1d7fd/673215a3d1f02.png",
+                  data: [{l:"", le:"", p:"3.5", c:"161"}] },
+                { name: "سفن اب دايت", nameEn: "Diet 7 Up", img: "https://media-files.tryordersystem.com/menu/saruja/471f1f3c-5b66-48bd-b4b6-0aff1527494c/673215e890bd8.png",
+                  data: [{l:"", le:"", p:"3.5", c:"0"}] },
+                { name: "ميرندا برتقال", nameEn: "Mirinda", img: "https://media-files.tryordersystem.com/menu/saruja/e0df34f9-f373-40fb-b526-50ee402dc6ce/6732163d41263.png",
+                  data: [{l:"", le:"", p:"3.5", c:"161"}] },
+                { name: "ديو", nameEn: "Dew", img: "https://media-files.tryordersystem.com/menu/saruja/db1941cb-3147-4f75-b8f1-b1a29b22098a/6732166a3f884.png",
+                  data: [{l:"", le:"", p:"3.5", c:"161"}] },
+                { name: "حمضيات", nameEn: "Citrus", img: "https://media-files.tryordersystem.com/menu/saruja/3d82eb81-094a-4afb-8ec7-3a25fbaa360f/67321616900a7.png",
+                  data: [{l:"", le:"", p:"3.5", c:"161"}] },
+                { name: "ماء", nameEn: "Water", img: "https://media-files.tryordersystem.com/menu/saruja/a73d49fe-d641-4a67-8aac-13ae8deba486/67321bae37f7e.png",
+                  data: [{l:"", le:"", p:"1", c:"0"}] }
+            ]
+        };
+
+        const categoryIds = Object.keys(menuDB);
+
+        function initApp() {
+            renderNav();
+            renderAllSections();
+            updateStaticText();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('lang-text').innerText = currentLang === 'ar' ? 'EN' : 'عربي';
+            updateStaticText();
+            renderNav();
+            renderAllSections();
+        }
+
+        function updateStaticText() {
+            const t = translations[currentLang];
+            document.getElementById('header-title').innerText = t.title;
+            document.getElementById('header-subtitle').innerText = t.subtitle;
+            document.getElementById('search-input').placeholder = t.searchPH;
+            document.getElementById('order-btn-text').innerText = t.orderBtn;
+            document.getElementById('modal-title').innerText = t.modalTitle;
+            document.getElementById('modal-cashier').innerText = t.modalCashier;
+            document.getElementById('modal-cashier-sub').innerText = t.modalCashierSub;
+            document.getElementById('modal-or').innerText = t.modalOr;
+            document.getElementById('modal-app-text').innerText = t.modalAppText;
+            document.getElementById('modal-more').innerText = t.modalMore;
+        }
+
+        function renderNav() {
+            const container = document.getElementById('nav-buttons');
+            container.innerHTML = categoryIds.map(cat => `
+                <button onclick="scrollToSection('${cat}')" class="nav-btn px-4 py-2 rounded-lg bg-white/5 text-gray-300 font-bold text-xs md:text-sm whitespace-nowrap transition hover:bg-saruja-accent hover:text-white" data-target="${cat}">
+                    ${translations[currentLang].cats[cat]}
+                </button>
+            `).join('');
+        }
+
+        function renderAllSections() {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = categoryIds.map(cat => `
+                <section id="${cat}" class="category-section scroll-mt-32">
+                    <div class="flex items-center gap-2 mb-4 ${currentLang === 'ar' ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} border-saruja-accent">
+                        <h2 class="text-xl font-bold text-white">${translations[currentLang].cats[cat]}</h2>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3" id="${cat}-grid">
+                        ${getCardsHTML(cat)}
+                    </div>
+                </section>
+            `).join('');
+        }
+
+        function getCardsHTML(cat, filterText = "") {
+            return menuDB[cat].filter(item => {
+                const name = currentLang === 'ar' ? item.name : item.nameEn;
+                return !filterText || name.toLowerCase().includes(filterText.toLowerCase());
+            }).map(item => {
+                const name = currentLang === 'ar' ? item.name : item.nameEn;
+                const altName = currentLang === 'ar' ? item.nameEn : item.name;
+                
+                const dataHtml = item.data.map(d => {
+                    const label = currentLang === 'ar' ? d.l : d.le;
+                    return `
+                    <div class="flex flex-col items-center">
+                        ${label ? `<span class="size-label">${label}</span>` : ''}
+                        <div class="price-box">
+                            <span class="price-text">${d.p}</span> <span class="currency-text">${currentLang === 'ar' ? 'ر.س' : 'SAR'}</span>
+                        </div>
+                        <span class="cal-text">${d.c} Cal</span>
+                    </div>`;
+                }).join('');
+                
+                // Optimized horizontal height
+                return `
+                <div class="glass-card rounded-xl overflow-hidden relative flex flex-row items-stretch h-auto min-h-[96px] py-2">
+                    <div class="w-32 md:w-40 shrink-0 relative overflow-hidden ${currentLang === 'ar' ? 'border-l' : 'border-r'} border-white/5 bg-black my-auto h-24 rounded-lg mx-2">
+                        <img src="${item.img}" alt="${name}" loading="lazy" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 p-2 flex flex-col justify-center">
+                        <div class="mb-2">
+                            <h3 class="text-base md:text-lg font-bold text-white leading-tight truncate text-start">${name}</h3>
+                            <p class="text-[10px] text-gray-500 text-start">${altName}</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 justify-end items-end w-full mt-auto">
+                            ${dataHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleSearch() {
+            const container = document.getElementById('search-container');
+            container.classList.toggle('open');
+            if(container.classList.contains('open')) document.getElementById('search-input').focus();
+        }
+
+        function filterMenu() {
+            const text = document.getElementById('search-input').value;
+            categoryIds.forEach(cat => {
+                document.getElementById(`${cat}-grid`).innerHTML = getCardsHTML(cat, text);
+            });
+        }
+
+        function openModal() { document.getElementById('orderModal').classList.add('active'); }
+        function closeModal() { document.getElementById('orderModal').classList.remove('active'); }
+
+        window.onload = () => {
+            initApp();
+            const tl = gsap.timeline();
+            tl.to(".falling-char", { opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: "bounce.out", y: -50 })
+              .to("#slogan", { opacity: 1, duration: 0.5 })
+              .to("#intro-screen", { y: "-100%", duration: 0.8, ease: "power2.inOut", delay: 0.5 })
+              .to("#main-content", { opacity: 1, duration: 0.5 });
+            
+            const emberContainer = document.getElementById('embers-container');
+            const isMobile = window.innerWidth < 768;
+            const limit = isMobile ? 12 : 30; 
+            setInterval(() => {
+                if (emberContainer.childElementCount > limit) return;
+                const ember = document.createElement('div');
+                ember.className = 'ember';
+                ember.style.left = Math.random() * 100 + 'vw';
+                emberContainer.appendChild(ember);
+                gsap.to(ember, {
+                    y: -window.innerHeight, opacity: [0, 1, 0], x: "random(-50, 50)",
+                    duration: Math.random() * 3 + 4, ease: "linear",
+                    onComplete: () => ember.remove()
+                });
+            }, isMobile ? 300 : 150);
+        };
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            const navHeight = document.getElementById('main-nav').offsetHeight;
+            const searchHeight = document.getElementById('search-container').classList.contains('open') ? 60 : 0;
+            const target = el.getBoundingClientRect().top + window.pageYOffset - navHeight - searchHeight - 10;
+            window.scrollTo({ top: target, behavior: 'smooth' });
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('bg-saruja-accent', 'text-white');
+                b.classList.add('bg-white/5', 'text-gray-300');
+            });
+            const activeBtn = document.querySelector(`.nav-btn[data-target="${id}"]`);
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-white/5', 'text-gray-300');
+                activeBtn.classList.add('bg-saruja-accent', 'text-white');
+            }
+        }
+    </script>
+</body>
+</html>
